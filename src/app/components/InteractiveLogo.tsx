@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeftIcon, ArrowRightIcon, Icon } from "lucide-react";
 
 const base = "/assets/svg";
 const LOGO_PARTS = [
@@ -86,7 +85,6 @@ export function InteractiveLogo() {
       onClick={() => goTo(currentIndex + 1)}
       aria-label="Logo Mindline - elementos da identidade"
     >
-      {/* Um único espaço fixo para a logo */}
       <div className="relative w-[120px] h-[120px] md:w-[160px] md:h-[160px] flex items-center justify-center overflow-visible">
         <AnimatePresence initial={false} mode="wait" custom={direction}>
           <motion.div
@@ -112,8 +110,6 @@ export function InteractiveLogo() {
           className="w-full h-full object-contain pointer-events-none"
         />
       </div>
-
-      {/* Texto abaixo: significado da logo atual */}
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}

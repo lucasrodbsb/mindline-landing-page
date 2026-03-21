@@ -29,7 +29,7 @@ const partners = [
 
 export function About() {
   return (
-    <section id="sobre" className="relative overflow-hidden bg-white py-14 sm:py-16">
+    <section id="sobre" className="relative overflow-hidden bg-white py-10 sm:py-16">
       {/* Textura bem leve - pontinhos */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -91,13 +91,13 @@ export function About() {
         </div>
       </div>
 
-      {/* Sócias */}
-      <div className="max-w-5xl mx-auto mt-14 px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 space-y-2">
+      {/* Sócias — mobile: carrossel com scroll-snap; sm+: grid */}
+      <div className="max-w-5xl mx-auto mt-10 sm:mt-14 px-0 sm:px-6 lg:px-8">
+        <div className="text-center mb-6 sm:mb-8 space-y-1.5 sm:space-y-2 px-4 sm:px-0">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8E79A2]">
             Quem está por trás da Mindline
           </p>
-          <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm md:text-base text-neutral-600 max-w-2xl mx-auto leading-snug sm:leading-relaxed">
             Duas profissionais que compartilham o mesmo propósito:{" "}
             <span className="font-semibold text-[#56274f]">
               cuidar de pessoas com acolhimento e responsabilidade.
@@ -105,16 +105,32 @@ export function About() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10">
+        <div
+          className="
+            flex sm:grid sm:grid-cols-2 gap-3 sm:gap-8 md:gap-10
+            overflow-x-auto snap-x snap-mandatory sm:overflow-visible sm:snap-none
+            pl-[max(1rem,calc(50vw-42vw))] pr-[max(1rem,calc(50vw-42vw))] sm:pl-0 sm:pr-0
+            pb-1 sm:pb-0
+            [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
+            touch-pan-x
+          "
+        >
           {partners.map((person) => (
-            <div
+            <article
               key={person.name}
-              className="relative overflow-hidden rounded-3xl bg-white/80 border border-[#E4D9F0] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col items-center px-6 py-7"
+              className="
+                snap-center shrink-0 w-[84vw] max-w-90 sm:w-auto sm:max-w-none sm:shrink sm:min-w-0
+                relative overflow-hidden rounded-2xl sm:rounded-3xl
+                bg-white/90 border border-[#E4D9F0] shadow-[0_8px_30px_-8px_rgba(86,39,79,0.12)]
+                flex flex-col items-center text-center
+                px-4 py-5 sm:px-6 sm:py-7
+                transition-all duration-200 sm:hover:shadow-md sm:hover:-translate-y-1
+              "
             >
-              <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-[#38AEC4] via-[#6780B6] to-[#56274F]" />
+              <div className="absolute inset-x-0 top-0 h-0.5 sm:h-1 bg-linear-to-r from-[#38AEC4] via-[#6780B6] to-[#56274F]" />
 
-              <div className="mb-4">
-                <div className="relative w-24 h-24 rounded-full overflow-hidden ring-4 ring-[#56274f]/10 shadow-md">
+              <div className="mb-3 sm:mb-4">
+                <div className="relative w-19 h-19 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-[3px] sm:ring-4 ring-[#56274f]/10 shadow-md">
                   <img
                     src={person.image}
                     alt={person.name}
@@ -123,20 +139,26 @@ export function About() {
                 </div>
               </div>
 
-              <h3 className="text-[#56274f] text-center font-semibold text-lg mb-1">
+              <h3
+                className={`${plusJakarta.className} text-[#56274f] font-semibold text-base sm:text-lg mb-0.5 sm:mb-1 leading-tight`}
+              >
                 {person.name}
               </h3>
-              <p className="text-[#8E79A2] text-center text-xs md:text-sm mb-3">
+              <p className="text-[#8E79A2] text-xs md:text-sm mb-2 sm:mb-3 leading-snug px-0.5">
                 {person.role}
               </p>
 
-              <p className="text-xs text-neutral-500 text-center max-w-xs">
+              <p className="text-xs text-neutral-500 leading-relaxed max-w-70 sm:max-w-xs mx-auto">
                 Atuação comprometida em criar um espaço seguro, ético e acolhedor para
                 cada pessoa que busca apoio psicológico na Mindline.
               </p>
-            </div>
+            </article>
           ))}
         </div>
+
+        <p className="sm:hidden text-center text-[0.65rem] text-[#8E79A2]/90 mt-3 px-6">
+          Deslize para ver a outra profissional
+        </p>
       </div>
     </section>
   );

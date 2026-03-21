@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -61,8 +61,33 @@ function SlideCard({ space }: { space: (typeof SPACES)[0] }) {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to top, rgba(86,39,79,0.88) 0%, rgba(86,39,79,0.35) 25%, transparent 55%)",
+            "linear-gradient(to top, rgba(86,39,79,0.72) 0%, rgba(86,39,79,0.22) 28%, transparent 62%)",
         }}
+      />
+    </div>
+  );
+}
+
+function PeekThumb({
+  space,
+  side,
+}: {
+  space: (typeof SPACES)[0];
+  side: "left" | "right";
+}) {
+  return (
+    <div
+      className={[
+        "relative w-full aspect-3/4 sm:aspect-4/5 rounded-2xl overflow-hidden",
+        "ring-1 ring-[#56274f]/10 shadow-md bg-white/60",
+        side === "left" ? "origin-right scale-[0.94]" : "origin-left scale-[0.94]",
+      ].join(" ")}
+      aria-hidden
+    >
+      <img src={space.src} alt="" className="w-full h-full object-cover opacity-85" />
+      <div
+        className="absolute inset-0 pointer-events-none bg-linear-to-t from-[#56274f]/25 to-transparent"
+        aria-hidden
       />
     </div>
   );
@@ -77,6 +102,9 @@ export function OurSpace() {
   const prevIndex = (currentIndex - 1 + total) % total;
   const nextIndex = (currentIndex + 1) % total;
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRaf = useRef<number | undefined>(undefined);
+
   const goTo = (index: number) => {
     if (index < 0) {
       setDirection("prev");
@@ -87,6 +115,56 @@ export function OurSpace() {
     } else {
       setDirection(index > currentIndex ? "next" : "prev");
       setCurrentIndex(index);
+    }
+  };
+
+  const updateIndexFromScroll = useCallback(() => {
+    const root = scrollRef.current;
+    if (!root || root.clientWidth < 8) return;
+    const rect = root.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    let best = 0;
+    let bestDist = Infinity;
+    root.querySelectorAll<HTMLElement>("[data-space-slide]").forEach((node, i) => {
+      const nr = node.getBoundingClientRect();
+      const cx = nr.left + nr.width / 2;
+      const d = Math.abs(cx - centerX);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    });
+    setCurrentIndex(best);
+  }, []);
+
+  const onScrollStrip = useCallback(() => {
+    if (scrollRaf.current !== undefined) {
+      cancelAnimationFrame(scrollRaf.current);
+    }
+    scrollRaf.current = requestAnimationFrame(updateIndexFromScroll);
+  }, [updateIndexFromScroll]);
+
+  useEffect(() => {
+    updateIndexFromScroll();
+  }, [updateIndexFromScroll]);
+
+  const scrollToSlideMobile = useCallback((index: number) => {
+    const el = scrollRef.current?.querySelector<HTMLElement>(
+      `[data-space-slide="${index}"]`
+    );
+    el?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, []);
+
+  const handleDotClick = (index: number) => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      goTo(index);
+    } else {
+      setCurrentIndex(index);
+      scrollToSlideMobile(index);
     }
   };
 
@@ -137,27 +215,15 @@ export function OurSpace() {
 
         {/* Carrossel */}
         <div className="relative max-w-5xl mx-auto">
-          {/* Peek dos lados (prev/next borrados) - apenas desktop */}
-          <div className="hidden lg:grid lg:grid-cols-[1fr_2.2fr_1fr] gap-4 items-center">
-            {/* Prev - borrado, só visual */}
-            <div
-              className="relative aspect-video rounded-2xl overflow-hidden"
-              style={{
-                filter: "blur(4px)",
-                opacity: 0.75,
-                transform: "scale(0.9)",
-              }}
-              aria-hidden
-            >
-              <img
-                src={SPACES[prevIndex].src}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            </div>
+          {/* Desktop: faixa contínua com destaque no centro */}
+          <div className="hidden lg:grid lg:grid-cols-[1fr_2.35fr_1fr] gap-5 lg:gap-6 items-center">
+            <PeekThumb space={SPACES[prevIndex]} side="left" />
 
-            {/* Slide central */}
-            <div className="relative aspect-16/10 rounded-3xl overflow-hidden">
+            <div
+              className="relative aspect-16/10 rounded-3xl overflow-hidden z-1
+                shadow-[0_28px_60px_-12px_rgba(86,39,79,0.35),0_12px_24px_-8px_rgba(56,174,196,0.18)]
+                ring-[3px] ring-white ring-offset-4 ring-offset-[#f5f0f9]"
+            >
               <AnimatePresence initial={false} mode="wait" custom={direction}>
                 <motion.div
                   key={currentIndex}
@@ -171,87 +237,61 @@ export function OurSpace() {
                   <SlideCard space={current} />
                 </motion.div>
               </AnimatePresence>
-            </div>
-
-            {/* Next - borrado, só visual */}
-            <div
-              className="relative aspect-video rounded-2xl overflow-hidden"
-              style={{
-                filter: "blur(4px)",
-                opacity: 0.75,
-                transform: "scale(0.9)",
-              }}
-              aria-hidden
-            >
-              <img
-                src={SPACES[nextIndex].src}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-
-          {/* Mobile / tablet: só o slide central + setas por cima */}
-          <div className="lg:hidden relative aspect-16/10 max-w-4xl mx-auto rounded-3xl overflow-hidden">
-            <AnimatePresence initial={false} mode="wait" custom={direction}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="absolute inset-0"
+              <button
+                type="button"
+                onClick={() => goTo(currentIndex - 1)}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-white shadow-lg flex items-center justify-center transition-all text-[#56274f] hover:scale-105"
+                aria-label="Slide anterior"
               >
-                <SlideCard space={current} />
-              </motion.div>
-            </AnimatePresence>
+                <ChevronLeft className="w-5 h-5" strokeWidth={2.25} />
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo(currentIndex + 1)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-white shadow-lg flex items-center justify-center transition-all text-[#56274f] hover:scale-105"
+                aria-label="Próximo slide"
+              >
+                <ChevronRight className="w-5 h-5" strokeWidth={2.25} />
+              </button>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => goTo(currentIndex - 1)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-colors text-[#56274f]"
-              aria-label="Slide anterior"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              type="button"
-              onClick={() => goTo(currentIndex + 1)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-colors text-[#56274f]"
-              aria-label="Próximo slide"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+            <PeekThumb space={SPACES[nextIndex]} side="right" />
           </div>
 
-          {/* Setas desktop (além do peek) */}
-          <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 left-0 right-0 pointer-events-none justify-between px-2">
-            <button
-              type="button"
-              onClick={() => goTo(currentIndex - 1)}
-              className="pointer-events-auto w-14 h-14 rounded-full bg-white/95 hover:bg-white shadow-xl flex items-center justify-center transition-all text-[#56274f] hover:scale-110 -translate-x-2"
-              aria-label="Slide anterior"
+          {/* Mobile / tablet: scroll-snap + peek nas bordas (sem setas) */}
+          <div className="lg:hidden w-[calc(100%+2rem)] max-w-none -mx-4 sm:w-[calc(100%+3rem)] sm:-mx-6">
+            <div
+              ref={scrollRef}
+              onScroll={onScrollStrip}
+              role="region"
+              aria-roledescription="Carrossel"
+              aria-label="Fotos do espaço — deslize para o lado"
+              className="flex overflow-x-auto snap-x snap-mandatory gap-3 sm:gap-4 pb-1
+                pl-[max(1rem,calc(50vw-42vw))] pr-[max(1rem,calc(50vw-42vw))]
+                [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
+                touch-pan-x"
             >
-              <ChevronLeft className="w-7 h-7" />
-            </button>
-            <button
-              type="button"
-              onClick={() => goTo(currentIndex + 1)}
-              className="pointer-events-auto w-14 h-14 rounded-full bg-white/95 hover:bg-white shadow-xl flex items-center justify-center transition-all text-[#56274f] hover:scale-110 translate-x-2"
-              aria-label="Próximo slide"
-            >
-              <ChevronRight className="w-7 h-7" />
-            </button>
+              {SPACES.map((space, index) => (
+                <div
+                  key={space.src}
+                  data-space-slide={index}
+                  className="snap-center shrink-0 w-[84vw] max-w-2xl aspect-16/10 rounded-3xl overflow-hidden z-1
+                    shadow-[0_22px_48px_-10px_rgba(86,39,79,0.32),0_10px_20px_-6px_rgba(56,174,196,0.16)]
+                    ring-2 ring-white"
+                >
+                  <SlideCard space={space} />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Dots */}
-          <div className="flex justify-center gap-2 mt-6 flex-wrap">
+          <div className="flex justify-center gap-1.5 sm:gap-2 mt-6 max-w-full overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden flex-nowrap sm:flex-wrap sm:overflow-visible">
             {SPACES.map((_, index) => (
               <button
                 key={index}
                 type="button"
-                onClick={() => goTo(index)}
+                onClick={() => handleDotClick(index)}
                 className="rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#56274f]/40 focus:ring-offset-2"
                 aria-label={`Ir para slide ${index + 1}`}
               >

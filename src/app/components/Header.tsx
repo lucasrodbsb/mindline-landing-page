@@ -9,7 +9,7 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  const menuItems = ["Sobre", "Nosso Espaço", "Benefícios", "Contato", "FAQ"];
+  const menuItems = ["Sobre", "Benefícios", "Nosso Espaço", "Contato", "FAQ"];
 
   useEffect(() => {
     const handleScroll = () => {

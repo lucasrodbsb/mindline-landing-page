@@ -47,11 +47,11 @@ export function Footer() {
               <img
                 src={LOGO}
                 alt="Mindline"
-                className="h-8 sm:h-9 md:h-10 w-auto brightness-0 invert opacity-95"
+                className="h-12 sm:h-14 md:h-16 w-auto brightness-0 invert opacity-95"
               />
             </a>
             <p
-              className={`${plusJakarta.className} mt-3 sm:mt-4 text-white/80 text-xs sm:text-sm leading-relaxed max-w-[260px]`}
+              className={`${plusJakarta.className} mt-3.5 sm:mt-4 text-white/80 text-xs sm:text-sm leading-relaxed max-w-[260px]`}
             >
               Cuidando da sua saúde mental com acolhimento e expertise.
             </p>

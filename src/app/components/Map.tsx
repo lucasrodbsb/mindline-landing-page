@@ -59,7 +59,6 @@ export function Map() {
               allowFullScreen
               loading="lazy"
               allow="geolocation"
-              allowTransparency
 
               referrerPolicy="no-referrer-when-downgrade"
             />

@@ -87,7 +87,7 @@ export function Contact() {
   return (
     <section
       id="contato"
-      className="relative py-14 sm:py-20 md:py-24 overflow-hidden"
+      className="relative py-10 sm:py-20 md:py-24 overflow-hidden"
     >
       {/* Imagem de fundo com parallax e mais visível */}
       <div
@@ -119,32 +119,32 @@ export function Contact() {
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Label - full width */}
-        <div className="mb-8">
+        <div className="mb-5 sm:mb-8">
           <p className="text-white/80 text-xs font-semibold uppercase tracking-[0.18em] mb-2">
             Contato
           </p>
           <div className="h-0.5 w-10 bg-linear-to-r from-[#38AEC4] to-white rounded-full" />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-start">
-          {/* Coluna esquerda: título + canais de contato */}
+        <div className="grid md:grid-cols-2 gap-8 md:gap-14 items-start">
           <div>
             <h2
-              className={`${plusJakarta.className} text-white text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4`}
+              className={`${plusJakarta.className} text-white text-[1.65rem] leading-snug sm:text-3xl sm:leading-tight md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-3 sm:mb-4`}
             >
               Fale{" "}
               <span className="relative inline-block">
                 conosco
-                <span className="pointer-events-none absolute inset-x-0 -bottom-1 h-1 rounded-full bg-linear-to-r from-[#38AEC4] via-white/90 to-[#C2B4CF]" />
+                <span className="pointer-events-none absolute inset-x-0 -bottom-0.5 sm:-bottom-1 h-0.5 sm:h-1 rounded-full bg-linear-to-r from-[#38AEC4] via-white/90 to-[#C2B4CF]" />
               </span>
             </h2>
-            <p className="text-white/90 text-sm md:text-base leading-relaxed mb-8">
+            <p className="text-white/88 text-xs sm:text-sm md:text-base leading-snug sm:leading-relaxed mb-6 sm:mb-8 max-w-xl">
               Escolha a melhor forma de entrar em contato ou envie sua mensagem
-              pelo formulário ao lado.
+              pelo formulário{" "}
+              <span className="md:hidden">abaixo</span>
+              <span className="hidden md:inline">ao lado</span>.
             </p>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               {CONTACT_CARDS.map((item, index) => {
                 const isCardHovered = hoveredCardIndex === index;
                 const isCardBlurred =
@@ -161,30 +161,32 @@ export function Contact() {
                     }
                     onMouseEnter={() => setHoveredCardIndex(index)}
                     onMouseLeave={() => setHoveredCardIndex(null)}
-                    className="group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:bg-white/10"
+                    className={`group flex items-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl p-3.5 sm:p-4 transition-all duration-300 active:scale-[0.99] sm:hover:bg-white/10 ${
+                      isCardBlurred
+                        ? "max-md:opacity-100 max-md:blur-none md:opacity-65 md:blur-xs"
+                        : ""
+                    }`}
                     style={{
                       background: "rgba(255, 255, 255, 0.06)",
                       border: "1px solid rgba(255, 255, 255, 0.12)",
-                      filter: isCardBlurred ? "blur(4px)" : "none",
-                      opacity: isCardBlurred ? 0.65 : 1,
                     }}
                   >
                     <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center text-white shrink-0 transition-transform group-hover:scale-105"
+                      className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl flex items-center justify-center text-white shrink-0 transition-transform sm:group-hover:scale-105"
                       style={{
                         background:
                           "linear-gradient(135deg, #38AEC4, #6780B6, #56274F)",
                       }}
                     >
-                      <item.icon className="w-5 h-5" strokeWidth={2} />
+                      <item.icon className="w-4.5 h-4.5 sm:w-5 sm:h-5" strokeWidth={2} />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <span
-                        className={`${plusJakarta.className} block font-semibold text-white text-sm`}
+                        className={`${plusJakarta.className} block font-semibold text-white text-[0.8125rem] sm:text-sm`}
                       >
                         {item.title}
                       </span>
-                      <span className="text-white/80 text-sm">
+                      <span className="text-white/78 text-xs sm:text-sm wrap-break-word">
                         {item.label}
                       </span>
                     </div>
@@ -194,11 +196,14 @@ export function Contact() {
             </div>
           </div>
 
-          {/* Coluna direita: formulário */}
           <div
             onMouseEnter={() => setHoveredForm(true)}
             onMouseLeave={() => setHoveredForm(false)}
-            className="relative overflow-hidden rounded-3xl p-6 md:p-8 transition-all duration-300 hover:shadow-xl"
+            className={`relative overflow-hidden rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 transition-all duration-300 sm:hover:shadow-xl ${
+              hoveredCardIndex !== null
+                ? "max-md:opacity-100 max-md:blur-none md:opacity-65 md:blur-xs"
+                : ""
+            }`}
             style={{
               background: "rgba(255, 255, 255, 0.08)",
               backdropFilter: "blur(20px)",
@@ -206,19 +211,17 @@ export function Contact() {
               boxShadow:
                 "0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
               border: "1px solid rgba(255, 255, 255, 0.18)",
-              filter: hoveredCardIndex !== null ? "blur(4px)" : "none",
-              opacity: hoveredCardIndex !== null ? 0.65 : 1,
             }}
           >
             <div
               className="absolute inset-x-0 top-0 h-px bg-linear-to-b from-white/30 to-transparent pointer-events-none"
               aria-hidden
             />
-            <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-3xl bg-linear-to-r from-[#38AEC4] via-[#6780B6] to-[#56274F] opacity-60" />
+            <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl sm:rounded-t-3xl bg-linear-to-r from-[#38AEC4] via-[#6780B6] to-[#56274F] opacity-70 sm:opacity-60" />
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
               <div>
-                <label className="block text-white/90 text-sm font-medium mb-1.5">
+                <label className="block text-white/90 text-xs sm:text-sm font-medium mb-1 sm:mb-1.5">
                   Nome completo *
                 </label>
                 <input
@@ -228,13 +231,14 @@ export function Contact() {
                   onChange={handleChange}
                   placeholder="Nome completo"
                   required
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors"
+                  autoComplete="name"
+                  className="w-full min-h-11 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-white/10 border border-white/20 text-base text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div>
-                  <label className="block text-white/90 text-sm font-medium mb-1.5">
+                  <label className="block text-white/90 text-xs sm:text-sm font-medium mb-1 sm:mb-1.5">
                     Telefone *
                   </label>
                   <input
@@ -244,11 +248,13 @@ export function Contact() {
                     onChange={handleChange}
                     placeholder="(00) 00000-0000"
                     required
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors"
+                    autoComplete="tel"
+                    inputMode="tel"
+                    className="w-full min-h-11 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-white/10 border border-white/20 text-base text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/90 text-sm font-medium mb-1.5">
+                  <label className="block text-white/90 text-xs sm:text-sm font-medium mb-1 sm:mb-1.5">
                     E-mail *
                   </label>
                   <input
@@ -258,13 +264,15 @@ export function Contact() {
                     onChange={handleChange}
                     placeholder="seu@email.com"
                     required
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors"
+                    autoComplete="email"
+                    inputMode="email"
+                    className="w-full min-h-11 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-white/10 border border-white/20 text-base text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-white/90 text-sm font-medium mb-1.5">
+                <label className="block text-white/90 text-xs sm:text-sm font-medium mb-1 sm:mb-1.5">
                   Mensagem
                 </label>
                 <textarea
@@ -273,13 +281,13 @@ export function Contact() {
                   onChange={handleChange}
                   placeholder="Como podemos ajudar?"
                   rows={4}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors resize-none"
+                  className="w-full min-h-21 sm:min-h-26 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-white/10 border border-white/20 text-base text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-colors resize-none"
                 />
               </div>
 
               <button
                 type="submit"
-                className={`${plusJakarta.className} cursor-pointer w-full py-3.5 px-6 rounded-xl text-white font-semibold text-sm transition-all duration-200 hover:opacity-95 hover:scale-[1.02] active:scale-[0.98]`}
+                className={`${plusJakarta.className} cursor-pointer w-full min-h-12 py-3 sm:py-3.5 px-5 sm:px-6 rounded-lg sm:rounded-xl text-white font-semibold text-sm sm:text-base transition-all duration-200 sm:hover:opacity-95 sm:hover:scale-[1.02] active:scale-[0.98]`}
                 style={{
                   background:
                     "linear-gradient(135deg, #38AEC4, #4F8EC2, #6780B6, #8E79A2, #56274F)",
